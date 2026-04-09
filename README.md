@@ -118,16 +118,45 @@
 
 본 프로젝트는 그저 코드를 짜는 것을 넘어 실무 팀 단위 코드 작성처럼 **Git** 이라는 형상 관리 도구를 철저하게 곁에 두고 관리되었습니다.
 
-### 필수 기초 명령어 (7종) 사용 확인!
-저장소는 최초로 `git init`에 의해 로컬에 뿌리를 내렸고, `git add`와 `git commit`을 반복적으로 수행하여 약 15건 이상의 기능별 작업(보너스, 퀴즈, 메뉴 추가 등) 이력을 분리해 남겼습니다. 이후 `git push`를 통해 이곳 GitHub까지 데이터가 배달되었습니다.
+### ✅ 필수 7종 커맨드 + 복제/병합 실습 타임라인
+과제를 수행하며 터미널(CLI) 환경에서 실제로 타이핑하며 익혔던 주요 Git 명령어들의 흐름 기록입니다. 총 7가지(`init`, `add`, `commit`, `push`, `pull`, `checkout`, `clone`)의 필수 명령어를 완벽히 체험했습니다.
 
-특히나 퀴즈 풀기 기능을 안전하게 실험하기 위해, `git checkout -b feature/play-quiz` 명령을 써서 메인 줄기가 아닌 임시 공간(브랜치)에서 개발하다가 무사히 `merge`된 특별한 경험 기록도 존재합니다!
+**[Phase 1] 로컬 빌드 및 버전 기록**
+```bash
+# 1. 처음 폴더를 Git 저장소로 지정하기
+git init
 
-### 두근두근 Clone & Pull 복제 실습 체험
-실무에서의 동료와의 협업을 가상해 로컬 디렉토리상에서 아래의 시나리오를 통과했습니다.
-1. 이 완성된 전체 저장소를 `git clone` 명령어로 동일 환경에 `1-B-practice`라는 제2의 폴더로 통째로 복제해냈습니다.
-2. 복제된 가상의 동료 폴더(`1-B-practice`) 안에서 README 파일에 테스트 텍스트 수정 작업을 거치고, `push`를 진행했습니다.
-3. 이를 다시 본래 주인의 폴더(`1-B`)로 돌아와 `git pull` 명령어로 당겨 받아들였습니다. **그 결과 수동 타이핑 없이 변경 내역이 완벽히 다운로드 및 반영되는 과정을 지켜보고 터득해냈습니다.** 
+# 2. 파일 변경사항들 장바구니(Staging Area)에 담기
+git add .
+git add README.md
+
+# 3. 작업 단위별로 의미 있는 메시지와 함께 확정(Commit) 짓기
+git commit -m "Feat: 퀴즈 추가 및 삭제 기능 구현"
+```
+
+**[Phase 2] 안전한 가지치기 (Branching)**
+```bash
+# 4. 기능 실험을 위해 새로운 임시 브랜치를 만들고 즉시 이동하기
+git checkout -b feature/play-quiz
+
+# (기능 개발 완료 후) 다시 메인 줄기로 돌아와 안전하게 합치고 삭제하기
+git checkout main
+git merge feature/play-quiz
+git branch -d feature/play-quiz
+```
+
+**[Phase 3] 원격 저장소 연동 및 통신**
+```bash
+# 5. 완성된 코드를 내 GitHub(원격 저장소)로 쏘아 올리기
+git push origin main
+
+# 6. 협업을 가상하여, 타 디렉토리에 원격 저장소 통째로 복제하기 (Clone 실습)
+git clone https://github.com/ldryong1008-coder/1-B.git 1-B-practice
+
+# 7. 원격 저장소에서 외부(가상 동료)가 수정한 최신 내역을, 내 컴퓨터로 다시 당겨오기 (Pull 실습)
+git pull origin main
+```
+> **💡 복제 및 병합 실습 성과**: 수동으로 코드를 긁어 복사하는 것이 아니라 `git clone`과 `git pull` 명령어를 통해 원격 클라우드 서버와 로컬 컴퓨터 간의 코드가 완벽히 동기화(Sync)되는 형상 관리의 쾌감을 직접 확인하고 터득했습니다! 
 
 ---
 
