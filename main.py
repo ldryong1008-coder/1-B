@@ -4,6 +4,7 @@ from quiz import Quiz
 from data import DEFAULT_QUIZZES
 
 quizzes = DEFAULT_QUIZZES.copy()
+best_score = 0
 
 def get_menu_choice():
     while True:
@@ -24,6 +25,7 @@ def get_menu_choice():
             sys.exit(0)
 
 def play_quiz():
+    global best_score
     if not quizzes:
         print("\n⚠️ 등록된 퀴즈가 없습니다. 퀴즈를 먼저 추가해주세요.\n")
         return
@@ -67,6 +69,9 @@ def play_quiz():
     score_points = int((score / total) * 100) if total > 0 else 0
     print("========================================")
     print(f"🏆 결과: {total}문제 중 {score}문제 정답! ({score_points}점)")
+    if score_points > best_score:
+        print("🎉 새로운 최고 점수입니다!")
+        best_score = score_points
     print("========================================")
 
 def add_quiz():
@@ -103,6 +108,21 @@ def add_quiz():
     except (KeyboardInterrupt, EOFError):
         print("\n퀴즈 추가가 중단되었습니다.")
 
+def list_quizzes():
+    print(f"\n📋 등록된 퀴즈 목록 (총 {len(quizzes)}개)\n")
+    if not quizzes:
+        print("등록된 퀴즈가 없습니다.\n")
+        return
+        
+    print("-" * 40)
+    for i, quiz in enumerate(quizzes, 1):
+        print(f"[{i}] {quiz.question}")
+    print("-" * 40 + "\n")
+
+def show_score():
+    print("\n🏆 점수 확인")
+    print(f"현재 최고 점수: {best_score}점\n")
+
 def main():
     while True:
         print("========================================")
@@ -122,9 +142,9 @@ def main():
         elif choice == 2:
             add_quiz()
         elif choice == 3:
-            print("\n📋 퀴즈 목록 기능을 선택했습니다.\n")
+            list_quizzes()
         elif choice == 4:
-            print("\n🏆 점수 확인 기능을 선택했습니다.\n")
+            show_score()
         elif choice == 5:
             print("\n게임을 종료합니다. 안녕히 가세요!\n")
             break
