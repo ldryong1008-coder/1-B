@@ -130,7 +130,7 @@ class QuizGame:
                     return
                     
             if quiz.check_answer(user_answer):
-                earned = 50 if hint_used else 100
+                earned = 5 if hint_used else 10
                 print(f"✅ 정답입니다! (+{earned}점)\n")
                 score_sum += earned
                 correct_count += 1
@@ -139,11 +139,10 @@ class QuizGame:
                 
             print("-" * 40)
             
-        total_possible = len(game_quizzes) * 100
-        score_points = int((score_sum / total_possible) * 100) if total_possible > 0 else 0
+        score_points = score_sum
         
         print("========================================")
-        print(f"🏆 결과: {len(game_quizzes)}문제 중 {correct_count}문제 정답! ({score_points}점)")
+        print(f"🏆 결과: {len(game_quizzes)}문제 중 {correct_count}문제 정답! (총 {score_points}점)")
         if score_points > self.best_score:
             print("🎉 새로운 최고 점수입니다!")
             self.best_score = score_points
