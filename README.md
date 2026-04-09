@@ -132,33 +132,104 @@
 
 본 프로그램이 어떠한 고민과 설계 흐름으로 밑바닥부터 견고하게 조립되었는지 보여주는 7단계의 개발 타임라인입니다.
 
-```text
-[Step 1] Initial Setup (환경 설정 및 뼈대 구축)
-  ├─ 역할 분산을 위해 main.py, quiz.py, game.py 3개 파일 분할 생성
-  └─ 1~6번 터미널 UI 루프 작성 및 잘못된 입력을 막는 예외처리(try/except) 틀 마련
+### [Step 1] Initial Setup (환경 설정 및 뼈대 구축)
+역할 분산을 위해 핵심 파일 3개를 분할 생성하고, 애플리케이션 진입점(`main.py`)에 무한 루프와 예외 처리를 결합하여 사용자의 비정상 입력을 원천 차단하는 텍스트 UI 메뉴망을 구축했습니다.
+```python
+while True:
+    print("\n--- 🎬 영화 퀴즈 게임 ---")
+    print("1. 퀴즈 풀기   2. 퀴즈 추가 ... 6. 종료")
+    try:
+        choice = input("원하는 번호를 입력: ").strip()
+        if choice == '6': break
+    except Exception as e:
+        print(f"오류: {e}")
+```
 
-[Step 2] Class & Model (데이터 모델의 정의)
-  ├─ 개별 문제를 담을 Quiz 구조체 클래스 선언 및 JSON 직렬화 용도인 to_dict() 함수화
-  └─ 전체 시스템을 쥐고 흔들 QuizGame 컨트롤러 클래스의 윤곽 수립
+### [Step 2] Class & Model (데이터 모델의 정의)
+`quiz.py`에 개별 문제 정보를 규격화하는 `Quiz` 데이터 객체(Model)를 선언하고, 추후 JSON 통신을 위한 직렬화(Serialization) 메서드를 구현했습니다.
+```python
+class Quiz:
+    def __init__(self, question, choices, answer, hint=""):
+        self.question = question
+        self.choices = choices
+        self.answer = answer
+        self.hint = hint
 
-[Step 3] Data Persistence (JSON I/O 기초 연동)
-  └─ 프로그램이 꺼져도 복원되도록 state.json 입출력을 전담하는 load_state(), save_state() 탑재
+    def to_dict(self):
+        # JSON 직렬화를 위한 딕셔너리 리턴
+        return {"question": self.question, "choices": self.choices, "answer": self.answer, "hint": self.hint}
+```
 
-[Step 4] Quiz CRUD (퀴즈 추가 및 삭제)
-  ├─ 사용자 입력(Input)을 받아 새로운 Quiz 인스턴스를 배열에 집어넣는 로직 구현
-  └─ 불필요한 배열의 번호를 도려내어 리스트 객체 내에서 완전히 삭제하는 기능 연동
+### [Step 3] Data Persistence (JSON I/O 기초 연동)
+`game.py`의 `QuizGame` 컨트롤러 클래스에 `state.json` 물리 파일을 읽고 쓰는 입출력(I/O) 함수를 탑재하여, 프로그램이 꺼지더라도 데이터가 휘발되지 않도록 영속성을 부여했습니다.
+```python
+def save_state(self):
+    state = {
+        "quizzes": [q.to_dict() for q in self.quizzes],
+        "best_score": self.best_score,
+        "history": self.history
+    }
+    with open('state.json', 'w', encoding='utf-8') as f:
+        json.dump(state, f, ensure_ascii=False, indent=4)
+```
 
-[Step 5] Core Gameplay Logic (방어형 풀기 로직)
-  └─ 보유한 퀴즈를 반복문(for)으로 순회하며 답을 감정하고 실시간으로 정답 점수를 누적하는 뼈대 순환
+### [Step 4] Quiz CRUD (퀴즈 추가 및 삭제)
+객체를 동적으로 생성하여 내부 리스트(`quizzes`)에 등록하거나, 리스트의 `pop()` 메서드를 응용해 지정 번호의 항목을 조준 삭제(C/D)하는 로직을 결합했습니다.
+```python
+def add_quiz(self):
+    new_quiz = Quiz(question, choices, answer, hint)
+    self.quizzes.append(new_quiz)
+    self.save_state()  # 즉시 파일 보존
 
-[Step 6] Advanced Features (보너스 기능 강화)
-  ├─ random.shuffle()과 파이썬 슬라이싱의 조합으로 '원하는 문항 수만큼 무작위 문제 출제' 개편
-  ├─ 0번 입력 시 힌트를 내뱉고, 맞출 경우 10점 만점에서 5점으로 감점되는 복합 분기점(if) 룰 세팅
-  └─ datetime 모듈을 연결하여 가장 최근 5차례 플레이 전적(history)을 기록하는 스코어보드 완성
+def delete_quiz(self):
+    deleted = self.quizzes.pop(idx)
+    self.save_state()  # 즉시 파일 삭제 반영
+```
 
-[Step 7] Robustness & Fallback (백업 기능 및 자가 치유망 결합)
-  ├─ Ctrl+C 또는 EOFError 발생 시 터미널 튕김 현상을 막는 Graceful Shutdown 비상 방어벽 결합
-  └─ JSONDecodeError 발생 시 파일이 오염된 것으로 판독, data.py 원본으로 자동 복구해 내는 자가치유망 탑재
+### [Step 5] Core Gameplay Logic (방어형 풀기 로직)
+보유 퀴즈들을 반복문(`for`)으로 꺼내어 콘솔에 렌더링하고, 유저의 기입 답안과 실제 `quiz.answer`를 실시간 대조하여 점수를 누적시키는 메인 비즈니스 로직을 가동했습니다.
+```python
+for i, quiz in enumerate(selected_quizzes, 1):
+    print(f"\nQ{i}. {quiz.question}")
+    
+    user_ans = int(input("정답 번호: "))
+    if user_ans == quiz.answer:
+        print("정답입니다!")
+        score += 10
+```
+
+### [Step 6] Advanced Features (보너스 기능 강화)
+랜덤 모듈, 힌트 배점 패널티 분기점, `datetime` 기반 다이나믹 플레이 기록 등 고도화 기술을 프로그램 곳곳에 접목시켰습니다.
+```python
+# 1. 무작위 섞기 및 리스트 슬라이싱(원하는 갯수)
+random.shuffle(self.quizzes)
+selected = self.quizzes[:num]
+
+# 2. 힌트 시스템 및 감점 분기
+if user_ans == 0:
+    print(f"💡 힌트: {quiz.hint}")
+    # 힌트를 본 후 정답을 맞출 경우 score += 5 획득으로 규칙 변경
+
+# 3. 동적 히스토리 5개 한정 덱(Deque) 스타일 저장
+self.history.insert(0, {
+    "date": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+    "score": score
+})
+self.history = self.history[:5]
+```
+
+### [Step 7] Robustness & Fallback (백업 및 자가 치유망 결합)
+극한의 상황(`Ctrl+C` 비정상 셧다운, `JSONDecodeError` 파일 오염) 시 게임이 패닉에 빠지는 것을 막기 위해, 원본(`data.py`) 데이터를 긁어와 프로그램 스스로 회복을 꾀하는 최고봉 방어벽을 세웠습니다.
+```python
+except json.JSONDecodeError:
+    print("\n경고: state.json 파일이 깨졌습니다. 복구를 시도합니다.")
+    from data import get_default_quizzes_dict
+    self.quizzes = [Quiz.from_dict(q) for q in get_default_quizzes_dict()]
+    self.best_score = 0
+
+except KeyboardInterrupt:
+    print("\n플러그가 뽑혔습니다. 진행 상황을 비상 백업합니다.")
+    self.save_state()
 ```
 
 ---
