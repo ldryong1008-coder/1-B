@@ -1,4 +1,5 @@
 import sys
+import random
 from quiz import Quiz
 from data import DEFAULT_QUIZZES
 
@@ -27,11 +28,14 @@ def play_quiz():
         print("\n⚠️ 등록된 퀴즈가 없습니다. 퀴즈를 먼저 추가해주세요.\n")
         return
         
-    print(f"\n📝 퀴즈를 시작합니다! (총 {len(quizzes)}문제)\n")
+    game_quizzes = quizzes.copy()
+    random.shuffle(game_quizzes)
+        
+    print(f"\n📝 퀴즈를 시작합니다! (총 {len(game_quizzes)}문제)\n")
     print("-" * 40)
     
     score = 0
-    for i, quiz in enumerate(quizzes, 1):
+    for i, quiz in enumerate(game_quizzes, 1):
         quiz.display(i)
         
         while True:
