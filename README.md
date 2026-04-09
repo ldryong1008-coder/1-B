@@ -8,13 +8,31 @@
 ## 퀴즈 주제 선정 이유
 영화(타노스, 인터스텔라, 기생충, 해리포터, 매트릭스) 주제를 차용했습니다. 이유는 다양한 사람들이 즐겁게 문제를 풀 수 있는 보편적인 대중문화를 반영하기 때문입니다.
 
+## GitHub 저장소 URL
+- **URL**: [https://github.com/ldryong1008-coder/1-B.git](https://github.com/ldryong1008-coder/1-B.git)
+
+## 개발 환경 설정 (스크린샷)
+- **Python**: Python 3.10 이상 권장
+- **Git**: 기본 Git 환경 구축 완료
+![개발 환경 설정](docs/screenshots/env.png)
+
 ## 실행 방법
-1. 로컬 환경에 파이썬이 설치되어 있는지 확인합니다. (Python 3.10 이상 권장)
+1. 로컬 환경에 파이썬이 설치되어 있는지 확인합니다.
 2. 터미널을 열고, 프로젝트 폴더 경로로 이동합니다.
 3. 다음 명령어를 실행합니다.
    ```bash
    python main.py
    ```
+
+## 실행 화면 스크린샷 (구성 예시)
+- **메뉴 화면**:  
+  ![메뉴 화면](docs/screenshots/menu.png)
+- **퀴즈 풀기**:  
+  ![퀴즈 풀기](docs/screenshots/play.png)
+- **퀴즈 추가**:  
+  ![퀴즈 추가](docs/screenshots/add_quiz.png)
+- **점수 확인**:  
+  ![점수 확인](docs/screenshots/score.png)
 
 ## 기능 목록
 1. **퀴즈 풀기**: 문제 수를 직접 선택하고 저장된 퀴즈를 섞어(Random) 정답을 맞힙니다. 문제당 기본 배점은 10점이며, 풀이 중 '0'번을 입력하여 힌트를 사용할 경우 5점이 감점(5점 획득)됩니다.
@@ -29,7 +47,7 @@
 - `main.py`: 프로그램 주요 진입점 (메뉴 호출).
 - `quiz.py`: 단일 퀴즈 클래스 데이터 모델 (`Quiz`).
 - `game.py`: 퀴즈 게임 로직 총괄 및 `state.json`을 통한 데이터 접근 객체 제공 (`QuizGame`).
-- `data.py`: `state.json`이 존재하지 않을 시 제공하기 위한 최초 기본 퀴즈 5종 포함 로직.
+- `data.py`: `state.json`이 존재하지 않을 시 제공하기 위한 최초 기본 퀴즈 5종 구성.
 - `state.json`: 최고 점수 및 등록된 퀴즈 딕셔너리 정보가 보관되는 파일 (최초 실행 후 자동 생성됨).
 
 ## 데이터 파일 설명
@@ -62,5 +80,17 @@
 }
 ```
 
+## Git 워크플로우 실습 내역
 
-> Git clone & pull 실습을 위한 한 줄 추가 테스트
+### 기초 명령어 사용 (7종)
+개발 과정에서 `git init`, `git add`, `git commit`, `git push`, `git pull`, `git checkout`, `git clone` 명령어 7종이 모두 사용되었습니다.
+
+### Git 저장소 복제 실습 과정 요약
+`clone`과 `pull`을 경험하기 위해 다음의 순서로 로컬 복제 실습을 진행했습니다:
+1. `clone`: 기존 미션 수행 저장소(`1-B`)를 `1-B-practice` 폴더로 복제.
+2. `commit & push`: `1-B-practice` 폴더의 README 상에 테스트 텍스트를 한 줄 추가(수정)하고, commit 후 원본(`1-B` 폴더를 upstream으로 간주)을 향해 `push`하여 연동 성공.
+3. `pull` 테스트: 이렇게 `push`된 결과를 `1-B` 디렉토리 혹은 다른 로컬 환경에서 `pull` 했을 때 정상적으로 가져와지는 것을 확인 및 경험.
+
+### git log --oneline --graph 커밋 로그
+아래 이미지는 10개 이상의 의미 단위 커밋 및 브랜치 병합 과정이 포함된 명령어 로그입니다:
+![git log](docs/screenshots/git_log.png)
