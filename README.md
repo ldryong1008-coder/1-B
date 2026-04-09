@@ -88,23 +88,29 @@
 위에서 안내한 기능들이 실제로 어떻게 이뤄지는지 시각적으로 증명하는 자료입니다. (과제 제출 필수 스크린샷 캡쳐분)
 
 - **개발 환경 설정 증빙 (VSCode 및 파이썬 버전 등)**
-  !<img width="752" height="250" alt="Screenshot 2026-04-09 at 7 39 25 PM" src="https://github.com/user-attachments/assets/0ef22e73-4cf2-4c59-a639-449aaed0706c" />
+
+  <img width="752" height="250" alt="Screenshot 2026-04-09 at 7 39 25 PM" src="https://github.com/user-attachments/assets/0ef22e73-4cf2-4c59-a639-449aaed0706c" />
 
 
 - **메인 메뉴 화면**
-  !<img width="301" height="160" alt="Screenshot 2026-04-09 at 7 28 43 PM" src="https://github.com/user-attachments/assets/0afd1e81-d3ec-4265-9bf3-69be3fd2307e" />
+
+  <img width="301" height="160" alt="Screenshot 2026-04-09 at 7 28 43 PM" src="https://github.com/user-attachments/assets/0afd1e81-d3ec-4265-9bf3-69be3fd2307e" />
 
 - **퀴즈 풀기 진행 화면**
-  !<img width="429" height="221" alt="Screenshot 2026-04-09 at 7 29 50 PM" src="https://github.com/user-attachments/assets/5c6f062c-1cec-4710-97fe-6b91c4bea762" />
+
+  <img width="429" height="221" alt="Screenshot 2026-04-09 at 7 29 50 PM" src="https://github.com/user-attachments/assets/5c6f062c-1cec-4710-97fe-6b91c4bea762" />
 
 - **새로운 퀴즈 추가 화면**
-  !<img width="321" height="181" alt="Screenshot 2026-04-09 at 7 31 28 PM" src="https://github.com/user-attachments/assets/5e16be4c-2f7e-4c84-b114-d615084f60ca" />
+
+  <img width="321" height="181" alt="Screenshot 2026-04-09 at 7 31 28 PM" src="https://github.com/user-attachments/assets/5e16be4c-2f7e-4c84-b114-d615084f60ca" />
 
 - **내 기록/점수 확인 (스코어보드)**
-  !<img width="624" height="301" alt="Screenshot 2026-04-09 at 7 27 59 PM" src="https://github.com/user-attachments/assets/03c6264e-77c6-4e36-a3da-961af46e3f16" />
+
+  <img width="624" height="301" alt="Screenshot 2026-04-09 at 7 27 59 PM" src="https://github.com/user-attachments/assets/03c6264e-77c6-4e36-a3da-961af46e3f16" />
 
 - **의미있는 Git Log 이력 증빙** (`git log --oneline --graph` 수행 결과)
-  !<img width="624" height="284" alt="Screenshot 2026-04-09 at 7 26 19 PM" src="https://github.com/user-attachments/assets/e920e8dc-88ce-4939-87c6-6223fe58446a" />
+
+  <img width="624" height="284" alt="Screenshot 2026-04-09 at 7 26 19 PM" src="https://github.com/user-attachments/assets/e920e8dc-88ce-4939-87c6-6223fe58446a" />
 
 ---
 
