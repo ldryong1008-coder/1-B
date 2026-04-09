@@ -69,6 +69,40 @@ def play_quiz():
     print(f"🏆 결과: {total}문제 중 {score}문제 정답! ({score_points}점)")
     print("========================================")
 
+def add_quiz():
+    print("\n📌 새로운 퀴즈를 추가합니다.\n")
+    try:
+        question = input("문제를 입력하세요: ").strip()
+        if not question:
+            print("⚠️ 문제가 비어있습니다. 처음부터 다시 진행해주세요.\n")
+            return
+
+        choices = []
+        for i in range(1, 5):
+            choice = input(f"선택지 {i}: ").strip()
+            if not choice:
+                print("⚠️ 선택지가 비어있습니다. 처음부터 다시 진행해주세요.\n")
+                return
+            choices.append(choice)
+
+        answer_str = input("정답 번호 (1-4): ").strip()
+        if not answer_str:
+            print("⚠️ 정답 입력이 비어있습니다. 처음부터 다시 진행해주세요.\n")
+            return
+            
+        answer = int(answer_str)
+        if answer < 1 or answer > 4:
+            print("⚠️ 1에서 4 사이의 숫자로 정답을 입력해주세요.\n")
+            return
+            
+        new_quiz = Quiz(question=question, choices=choices, answer=answer)
+        quizzes.append(new_quiz)
+        print("\n✅ 퀴즈가 추가되었습니다!\n")
+    except ValueError:
+        print("⚠️ 잘못된 입력입니다. 정지에 숫자를 입력해주세요.\n")
+    except (KeyboardInterrupt, EOFError):
+        print("\n퀴즈 추가가 중단되었습니다.")
+
 def main():
     while True:
         print("========================================")
@@ -86,7 +120,7 @@ def main():
         if choice == 1:
             play_quiz()
         elif choice == 2:
-            print("\n📌 퀴즈 추가 기능을 선택했습니다.\n")
+            add_quiz()
         elif choice == 3:
             print("\n📋 퀴즈 목록 기능을 선택했습니다.\n")
         elif choice == 4:
