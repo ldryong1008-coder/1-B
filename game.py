@@ -1,6 +1,7 @@
 import json
 import random
 import os
+from datetime import datetime
 from quiz import Quiz
 from data import get_default_quizzes_dict
 
@@ -10,6 +11,7 @@ class QuizGame:
     def __init__(self):
         self.quizzes = []
         self.best_score = 0
+        self.history = []
         self.load_state()
 
     def load_state(self):
@@ -25,11 +27,12 @@ class QuizGame:
                 
             quizzes_data = data.get("quizzes", [])
             self.best_score = data.get("best_score", 0)
+            self.history = data.get("history", [])
             
             for q_data in quizzes_data:
                 self.quizzes.append(Quiz.from_dict(q_data))
                 
-            print(f"📂 저장된 데이터를 불러왔습니다. (퀴즈 {len(self.quizzes)}개, 최고점수 {self.best_score}점)")
+            print(f"📂 저장된 데이터를 불러왔습니다. (퀴즈 {len(self.quizzes)}개, 최고점수 {self.best_score}점, 기록 {len(self.history)}건)")
         except (json.JSONDecodeError, Exception) as e:
             print(f"⚠️ 데이터 파일이 손상되었습니다. 기본 상태로 시작합니다. ({str(e)})")
             self._load_default()
@@ -40,13 +43,15 @@ class QuizGame:
         for q in get_default_quizzes_dict():
             self.quizzes.append(Quiz.from_dict(q))
         self.best_score = 0
+        self.history = []
         self.save_state()
 
     def save_state(self):
         """현재 데이터를 state.json에 저장합니다."""
         data = {
             "quizzes": [quiz.to_dict() for quiz in self.quizzes],
-            "best_score": self.best_score
+            "best_score": self.best_score,
+            "history": self.history
         }
         try:
             with open(STATE_FILE, 'w', encoding='utf-8') as f:
@@ -62,20 +67,57 @@ class QuizGame:
         game_quizzes = self.quizzes.copy()
         random.shuffle(game_quizzes)
             
+        max_q = len(game_quizzes)
+        print(f"\n현재 총 {max_q}개의 문제가 등록되어 있습니다.")
+        while True:
+            try:
+                num_q_str = input(f"몇 문제를 푸시겠습니까? (1-{max_q}): ").strip()
+                if not num_q_str:
+                    continue
+                num_q = int(num_q_str)
+                if num_q < 1 or num_q > max_q:
+                    print(f"⚠️ 1에서 {max_q} 사이의 숫자를 입력해주세요.")
+                    continue
+                break
+            except ValueError:
+                print("⚠️ 숫자로 입력해주세요.")
+            except (KeyboardInterrupt, EOFError):
+                print("\n게임 진행이 중단되었습니다.")
+                return
+                
+        game_quizzes = game_quizzes[:num_q]
+            
         print(f"\n📝 퀴즈를 시작합니다! (총 {len(game_quizzes)}문제)\n")
         print("-" * 40)
         
-        score = 0
+        score_sum = 0
+        correct_count = 0
+        
         for i, quiz in enumerate(game_quizzes, 1):
             quiz.display(i)
+            hint_used = False
             
             while True:
                 try:
-                    user_answer_str = input("정답 입력: ").strip()
+                    user_answer_str = input("정답 입력 (힌트 보기: 0): ").strip()
                     if not user_answer_str:
                         print("⚠️ 빈 입력입니다. 정답 번호를 입력해주세요.")
                         continue
+                        
                     user_answer = int(user_answer_str)
+                    
+                    if user_answer == 0:
+                        if hint_used:
+                            print("⚠️ 이미 힌트를 사용했습니다.")
+                        else:
+                            quiz_hint = getattr(quiz, 'hint', "")
+                            if quiz_hint:
+                                print(f"💡 힌트: {quiz_hint}")
+                            else:
+                                print("💡 이 퀴즈는 등록된 힌트가 없습니다.")
+                            hint_used = True
+                        continue
+                        
                     if user_answer < 1 or user_answer > len(quiz.choices):
                         print(f"⚠️ 1부터 {len(quiz.choices)} 사이의 번호를 입력해주세요.")
                         continue
@@ -88,21 +130,34 @@ class QuizGame:
                     return
                     
             if quiz.check_answer(user_answer):
-                print("✅ 정답입니다!\n")
-                score += 1
+                earned = 50 if hint_used else 100
+                print(f"✅ 정답입니다! (+{earned}점)\n")
+                score_sum += earned
+                correct_count += 1
             else:
                 print(f"❌ 오답입니다! 정답은 {quiz.answer}번이었습니다.\n")
                 
             print("-" * 40)
             
-        total = len(game_quizzes)
-        score_points = int((score / total) * 100) if total > 0 else 0
+        total_possible = len(game_quizzes) * 100
+        score_points = int((score_sum / total_possible) * 100) if total_possible > 0 else 0
+        
         print("========================================")
-        print(f"🏆 결과: {total}문제 중 {score}문제 정답! ({score_points}점)")
+        print(f"🏆 결과: {len(game_quizzes)}문제 중 {correct_count}문제 정답! ({score_points}점)")
         if score_points > self.best_score:
             print("🎉 새로운 최고 점수입니다!")
             self.best_score = score_points
-            self.save_state()
+            
+        now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        if not hasattr(self, 'history'):
+            self.history = []
+            
+        self.history.append({
+            "date": now_str,
+            "questions": len(game_quizzes),
+            "score": score_points
+        })
+        self.save_state()
         print("========================================")
 
     def add_quiz(self):
@@ -131,7 +186,9 @@ class QuizGame:
                 print("⚠️ 1에서 4 사이의 숫자로 정답을 입력해주세요.\n")
                 return
                 
-            new_quiz = Quiz(question=question, choices=choices, answer=answer)
+            hint = input("힌트 (선택사항, 없으면 Enter): ").strip()
+                
+            new_quiz = Quiz(question=question, choices=choices, answer=answer, hint=hint)
             self.quizzes.append(new_quiz)
             self.save_state()
             print("\n✅ 퀴즈가 추가되었습니다!\n")
@@ -152,6 +209,43 @@ class QuizGame:
             print(f"[{i}] {quiz.question}")
         print("-" * 40 + "\n")
 
+    def delete_quiz(self):
+        print(f"\n🗑️ 퀴즈 삭제 (총 {len(self.quizzes)}개)\n")
+        if not self.quizzes:
+            print("등록된 퀴즈가 없습니다.\n")
+            return
+            
+        for i, quiz in enumerate(self.quizzes, 1):
+            print(f"[{i}] {quiz.question[:20]}..." if len(quiz.question) > 20 else f"[{i}] {quiz.question}")
+            
+        while True:
+            try:
+                del_idx_str = input("\n삭제할 퀴즈 번호를 입력하세요 (취소: 0): ").strip()
+                if not del_idx_str:
+                    continue
+                del_idx = int(del_idx_str)
+                if del_idx == 0:
+                    print("삭제가 취소되었습니다.")
+                    return
+                if del_idx < 1 or del_idx > len(self.quizzes):
+                    print(f"⚠️ 1부터 {len(self.quizzes)} 사이의 번호를 입력해주세요.")
+                    continue
+                    
+                deleted_quiz = self.quizzes.pop(del_idx - 1)
+                self.save_state()
+                print(f"\n✅ 퀴즈가 삭제되었습니다: {deleted_quiz.question[:20]}...\n")
+                break
+            except ValueError:
+                print("⚠️ 잘못된 입력입니다. 숫자로 입력해주세요.")
+            except (KeyboardInterrupt, EOFError):
+                print("\n삭제 진행이 중단되었습니다.")
+                return
+
     def show_score(self):
-        print("\n🏆 점수 확인")
+        print("\n🏆 점수 및 히스토리 확인")
         print(f"현재 최고 점수: {self.best_score}점\n")
+        if getattr(self, 'history', []):
+            print("📜 최근 게임 기록 (최대 5개)")
+            for rec in self.history[-5:]:
+                print(f"- {rec.get('date', '')} | {rec.get('questions', 0)}문제 풀이 | {rec.get('score', 0)}점")
+        print()

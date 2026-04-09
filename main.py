@@ -9,8 +9,8 @@ def get_menu_choice():
                 print("⚠️ 입력이 비어있습니다. 다시 입력해주세요.\n")
                 continue
             choice_num = int(choice)
-            if choice_num < 1 or choice_num > 5:
-                print("⚠️ 잘못된 입력입니다. 1-5 사이의 숫자를 입력하세요.\n")
+            if choice_num < 1 or choice_num > 6:
+                print("⚠️ 잘못된 입력입니다. 1-6 사이의 숫자를 입력하세요.\n")
                 continue
             return choice_num
         except ValueError:
@@ -29,8 +29,9 @@ def main():
         print("1. 퀴즈 풀기")
         print("2. 퀴즈 추가")
         print("3. 퀴즈 목록")
-        print("4. 점수 확인")
-        print("5. 종료")
+        print("4. 퀴즈 삭제")
+        print("5. 점수 확인")
+        print("6. 종료")
         print("========================================")
         
         choice = get_menu_choice()
@@ -42,8 +43,10 @@ def main():
         elif choice == 3:
             game.list_quizzes()
         elif choice == 4:
-            game.show_score()
+            game.delete_quiz()
         elif choice == 5:
+            game.show_score()
+        elif choice == 6:
             print("\n게임을 종료합니다. 안녕히 가세요!\n")
             game.save_state()
             break

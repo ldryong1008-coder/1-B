@@ -1,13 +1,15 @@
 class Quiz:
-    def __init__(self, question: str, choices: list[str], answer: int):
+    def __init__(self, question: str, choices: list[str], answer: int, hint: str = ""):
         """
         :param question: 퀴즈 문제
         :param choices: 4개의 선택지 리스트
         :param answer: 정답 번호 (1-4)
+        :param hint: 퀴즈 힌트 (선택사항)
         """
         self.question = question
         self.choices = choices
         self.answer = answer
+        self.hint = hint
 
     def display(self, index: int = None):
         """퀴즈를 화면에 출력합니다."""
@@ -27,7 +29,8 @@ class Quiz:
         return {
             "question": self.question,
             "choices": self.choices,
-            "answer": self.answer
+            "answer": self.answer,
+            "hint": self.hint
         }
 
     @classmethod
@@ -36,5 +39,6 @@ class Quiz:
         return cls(
             question=data.get("question", ""),
             choices=data.get("choices", []),
-            answer=data.get("answer", 1)
+            answer=data.get("answer", 1),
+            hint=data.get("hint", "")
         )
