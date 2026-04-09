@@ -88,7 +88,8 @@
 위에서 안내한 기능들이 실제로 어떻게 이뤄지는지 시각적으로 증명하는 자료입니다. (과제 제출 필수 스크린샷 캡쳐분)
 
 - **개발 환경 설정 증빙 (VSCode 및 파이썬 버전 등)**
-  <img width="752" height="250" alt="Screenshot 2026-04-09 at 7 37 56 PM" src="https://github.com/user-attachments/assets/b1503b7d-e8e8-4d36-91ec-205285c6a122" />
+  <img width="752" height="250" alt="Screenshot 2026-04-09 at 7 39 25 PM" src="https://github.com/user-attachments/assets/0ef22e73-4cf2-4c59-a639-449aaed0706c" />
+
 
 - **메인 메뉴 화면**
   <img width="301" height="160" alt="Screenshot 2026-04-09 at 7 28 43 PM" src="https://github.com/user-attachments/assets/0afd1e81-d3ec-4265-9bf3-69be3fd2307e" />
